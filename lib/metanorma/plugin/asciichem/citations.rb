@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'nokogiri'
+require 'moxml'
 
 module Metanorma
   module Plugin
@@ -89,9 +89,9 @@ module Metanorma
         # docidentifier; the anchor (InChIKey) replaces it so document
         # cross-references <<INCHIKEY>> land on the entry.
         def with_anchor(xml, anchor)
-          root = Nokogiri::XML(xml).root
-          root['id'] = anchor
-          root.to_xml
+          doc = Moxml.parse(xml)
+          doc.root['id'] = anchor
+          doc.to_xml
         end
 
         def bibliography_section(document, entries)

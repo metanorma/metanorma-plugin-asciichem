@@ -33,16 +33,6 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ['lib']
 
-  # Floors are the versions the suite validates against (pessimistic
-  # ~>); raise them only with a full-suite run. asciichem needs
-  # >= 0.29.2 (relaton-bib widening) inside the 0.29 line.
   spec.add_dependency 'asciichem', '~> 0.29', '>= 0.29.2'
-  spec.add_dependency 'asciidoctor', '~> 2.0'
-  spec.add_dependency 'nokogiri', '~> 1.18'
-
-  # metanorma-standoc lives in the Gemfile dev group: it is the
-  # integration-test backend (spec/metanorma/plugin/asciichem/
-  # standoc_spec.rb), not a runtime requirement — following the
-  # plugin contract, metanorma-standoc requires and registers this
-  # gem, like it does for metanorma-plugin-lutaml.
+  spec.add_dependency 'moxml', '~> 0.5'
 end
