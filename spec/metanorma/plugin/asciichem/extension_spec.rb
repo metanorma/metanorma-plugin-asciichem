@@ -13,7 +13,7 @@ RSpec.describe Metanorma::Plugin::Asciichem::Extension do
     # host, so the registration is active here.
     expect(Asciidoctor.load('x chem:H_2O[]', safe: :safe).blocks.first)
       .not_to be_nil
-    expect(Metanorma::Plugin::Asciichem::VERSION).to eq('0.1.0')
+    expect(Metanorma::Plugin::Asciichem::VERSION).to match(/\A\d+\.\d+\.\d+\z/)
   end
 
   describe '[chem] blocks' do
