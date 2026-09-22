@@ -111,9 +111,12 @@ A worked example document ships in `docs/example.adoc`.
 
 ## Compatibility
 
-Runtime dependencies are `asciichem` (>= 0.29.2), `asciidoctor`, and
-`nokogiri` — the extension operates at the Asciidoctor AST level and
-needs no Metanorma gem to run.
+Runtime dependencies are `asciichem` (`~> 0.29`, `>= 0.29.2`) and
+`moxml` — the extension operates at the Asciidoctor AST level and
+needs no Metanorma gem to run. Asciidoctor itself is provided by the
+host (metanorma-standoc requires and registers this gem; outside
+Metanorma, bring your own asciidoctor and register the extension as
+shown under Installation).
 
 The full metanorma-standoc compile is exercised by the suite:
 `spec/metanorma/plugin/asciichem/standoc_spec.rb` compiles a document

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'asciidoctor'
 require 'metanorma-plugin-asciichem'
 require 'rspec'
 

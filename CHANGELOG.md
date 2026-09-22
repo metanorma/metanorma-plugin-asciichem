@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- Runtime dependencies slimmed: `asciidoctor` and `nokogiri` are
+  gone. The host provides asciidoctor (metanorma-standoc requires
+  and registers the gem); the one direct XML touchpoint (setting
+  the InChIKey anchor on the emitted bibitem) now goes through
+  `moxml` (`~> 0.5`), the same adapter layer the rest of the
+  lutaml ecosystem uses.
+
 ## [0.1.1] - 2026-09-22
 
 ### Changed

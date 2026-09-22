@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'asciidoctor' unless defined?(Asciidoctor)
 require 'asciichem'
 
 module Metanorma
