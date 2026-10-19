@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- `asciichem` floor raised to `~> 0.30`, `>= 0.30.1` (moxml-based XML layer, CML group round-trip fix) and validated: the plugin suite passes against asciichem 0.30.1 with moxml 0.5.146 (the release carrying the namespace-bound XPath fix, lutaml/moxml#398).
+
 - Runtime dependencies slimmed: `asciidoctor` and `nokogiri` are
   gone. The host provides asciidoctor (metanorma-standoc requires
   and registers the gem); the one direct XML touchpoint (setting

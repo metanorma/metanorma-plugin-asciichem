@@ -33,6 +33,6 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'asciichem', '~> 0.29', '>= 0.29.2'
+  spec.add_dependency 'asciichem', '~> 0.30', '>= 0.30.1'
   spec.add_dependency 'moxml', '~> 0.5'
 end
