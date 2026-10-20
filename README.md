@@ -129,6 +129,16 @@ constraint to `< 3` so asciichem and current metanorma gems
 co-resolve in one bundle. Citation anchors read the emitted wire XML,
 so both relaton-bib major lines (1.x and 2.x keyword nestings) work.
 
+## Pilot document
+
+`examples/pilot/aspirin.adoc` is a small ISO-flavoured Metanorma
+document exercising the whole document layer: `[chem]` blocks render as
+MathML stems, typed condition roles (`[cat: H_2SO_4]`) survive, and a
+cited substance becomes a dataset bibitem anchored by InChIKey.
+`spec/metanorma/plugin/asciichem/pilot_spec.rb` compiles it through
+metanorma-standoc in CI (resolution is seeded from a recorded PubChem
+record so the check is offline).
+
 ## Development
 
 ```sh
