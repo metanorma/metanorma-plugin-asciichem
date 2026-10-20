@@ -1,0 +1,48 @@
+= Acetylsalicylic acid: synthesis and identity
+:no-isobib:
+:no-valid:
+:asciichem-cache-dir: /tmp/asciichem-pilot-cache
+
+== Scope
+
+This pilot document exercises the AsciiChem document layer end to end:
+`[chem]` blocks render as MathML formula stems, conditions carry typed
+role entries, and a cited substance resolves to a dataset-type
+bibliographic record anchored by InChIKey.
+
+== Synthesis
+
+Acetylsalicylic acid is prepared by O-acetylation of salicylic acid
+with acetic anhydride: chem:C_7H_6O_3 + C_4H_6O_3 ->[cat: H_2SO_4] C_9H_8O_4 + C_2H_4O_2[].
+
+[chem]
+----
+C_7H_6O_3 + C_4H_6O_3 ->[cat: H_2SO_4] C_9H_8O_4 + C_2H_4O_2
+----
+
+The product is the substance in <<sub-aspirin>>.
+
+== Identity
+
+[[sub-aspirin]]
+=== Acetylsalicylic acid
+
+[chem]
+----
+CC(=O)OC1=CC=CC=C1C(=O)O @name("aspirin") @cite("pubchem")
+----
+
+Its identity is machine-checkable: the InChIKey is the join key, and
+the citation record names the source that asserted it.
+
+== Conditions and roles
+
+The catalyst is written as a typed condition role, so the above/below
+convention is not needed to interpret it:
+
+[chem]
+----
+C_7H_6O_3 + C_4H_6O_3 ->[cat: H_2SO_4; solv: none] C_9H_8O_4 + C_2H_4O_2
+----
+
+Inline chemistry also works: chem:H_2O[].
