@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.4] - 2026-10-21
+
+### Added
+- Pilot document: `examples/pilot/aspirin.adoc` — aspirin end to end
+  through standoc (a `[chem]` block rendering as MathML plus an
+  `@cite` dataset bibitem), compiled in CI.
+
+### Changed
+- README: pilot document section.
+
 ## [0.1.3] - 2026-10-19
 
 ### Changed
