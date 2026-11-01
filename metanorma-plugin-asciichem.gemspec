@@ -34,5 +34,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'asciichem', '~> 0.30', '>= 0.30.1'
-  spec.add_dependency "moxml", "~> 0.6.0" # moxml 0.6 removed the Opal surface (lutaml/moxml#516); owner call to forward-pin the 0.6 series
+  # moxml 0.6 removed the Opal surface (lutaml/moxml#516); owner
+  # call to forward-pin the 0.6 series.
+  spec.add_dependency "moxml", "~> 0.6.0"
 end
