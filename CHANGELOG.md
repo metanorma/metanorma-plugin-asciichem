@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.6] - 2026-11-05
+
+### Changed
+- moxml pinned to the 0.6 line from 0.6.1 (the follow-up to the 0.6
+  forward-pin: resolves to 0.6.2; suite green against it).
+
 ## [0.1.4] - 2026-10-21
 
 ### Added
