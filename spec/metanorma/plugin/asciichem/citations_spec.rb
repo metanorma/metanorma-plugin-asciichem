@@ -64,6 +64,34 @@ RSpec.describe Metanorma::Plugin::Asciichem::Citations do
       expect(xml).to match(/<keyword>\s*(<vocab>\s*)?inchikey=BSYNRYMUTXBXSQ-UHFFFAOYSA-N/)
     end
 
+    it 'carries the resolver provenance as a note (attribution survives into the document)' do
+      doc = load_doc
+      described_class.append_bibliography(
+        doc,
+        molecules('CC(=O)OC1=CC=CC=C1C(=O)O @cas("50-78-2") @cite("pubchem")'),
+        cache: cache, fetch: fetch
+      )
+
+      xml = doc.blocks.last.blocks.first.lines.join
+      expect(xml).to include('<note type="provenance">')
+      expect(xml).to include('Retrieved from pubchem')
+      expect(xml).to include('PubChem, U.S. National Library of Medicine')
+    end
+
+    it 'carries the CC BY-NC attribution on Common Chemistry entries' do
+      AsciiChem::Resolver.register(:common_chemistry,
+                                   AsciiChem::Resolver::CommonChemistry)
+      doc = load_doc
+      described_class.append_bibliography(
+        doc,
+        molecules('CC(=O)OC1=CC=CC=C1C(=O)O @cas("50-78-2") @cite("common_chemistry")'),
+        cache: cache, fetch: fetch
+      )
+
+      xml = doc.blocks.last.blocks.first.lines.join
+      expect(xml).to include('CAS Common Chemistry (CC BY-NC 4.0)')
+    end
+
     it 'dedupes the same substance cited twice into one entry' do
       doc = load_doc
       described_class.append_bibliography(
