@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.7] - 2026-11-10
+
+### Changed
+- asciichem gem floor consumed at 0.31.11: `@cite` dataset bibitems
+  now carry the resolver provenance as a note (retrieval source,
+  version, and the source's required attribution — CAS Common
+  Chemistry results carry the CC BY-NC 4.0 terms into the rendered
+  document).
+
 ## [0.1.6] - 2026-11-05
 
 ### Changed
