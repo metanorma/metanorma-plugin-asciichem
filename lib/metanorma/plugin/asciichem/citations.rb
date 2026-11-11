@@ -45,7 +45,7 @@ module Metanorma
             # First-wins: a later identical (source, substance) keeps the
             # first-mention entry and order.
             entries.merge!(entries_for(molecule, cache: cache, fetch: fetch,
-                                       sources: sources)) do |_key, first, _last|
+                                                 sources: sources)) do |_key, first, _last|
               first
             end
           end
@@ -57,12 +57,7 @@ module Metanorma
         def warn_excluded_sources(molecules, sources)
           return unless sources
 
-          cited = molecules.flat_map do |molecule|
-            molecule.properties
-                    .select { |p| p.title == 'cite' && p.value }
-                    .map(&:value)
-          end.uniq
-          excluded = cited - sources.map(&:to_s)
+          excluded = cited_sources(molecules) - sources.map(&:to_s)
           return if excluded.empty?
 
           logger.warn(message_with_context(
@@ -73,9 +68,19 @@ module Metanorma
                       ))
         end
 
+        # Every source the document's molecules cite (the @cite
+        # property annotation's value), first-mention order.
+        def cited_sources(molecules)
+          molecules.flat_map do |molecule|
+            molecule.properties
+                    .select { |p| p.title == 'cite' && p.value }
+                    .map(&:value)
+          end.uniq
+        end
+
         def entries_for(molecule, cache:, fetch:, sources: nil)
           AsciiChem::Citation.for_molecule(molecule, cache: cache, fetch: fetch,
-                                           sources: sources)
+                                                     sources: sources)
                              .map { |source, bibitem| entry(source, bibitem) }
                              .reduce({}, :merge)
         rescue AsciiChem::Error => e
