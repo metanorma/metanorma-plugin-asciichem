@@ -10,9 +10,10 @@ module Metanorma
     # Relaton bibitems collected into the document bibliography - one
     # bibitem per (source, substance), anchored by InChIKey.
     #
-    # Following the plugin contract (lutaml, glossarist), this gem
-    # exposes the extension classes and does NOT register them with
-    # Asciidoctor itself; the host converter registers what it needs:
+    # Following the Metanorma plugin contract (lutaml, glossarist),
+    # this gem exposes the extension classes and does NOT register
+    # them with the host itself; the host converter registers what it
+    # needs:
     #
     #   Asciidoctor::Extensions.register do
     #     treeprocessor Metanorma::Plugin::Asciichem::Extension::ChemTreeprocessor

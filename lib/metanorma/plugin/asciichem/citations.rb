@@ -24,30 +24,58 @@ module Metanorma
         # molecules: parsed AsciiChem model nodes (Model::Molecule) as
         # harvested from [chem] blocks. cache:/fetch: pass through to
         # the resolver (same knobs as `asciichem resolve --refresh` and
-        # the asciichem CLI specs). Appends nothing when none of them
-        # carries @cite or none resolves (warns instead - builds stay
-        # green and reproducible via the resolver cache).
-        def append_bibliography(document, molecules, cache: nil, fetch: nil)
-          entries = resolve(molecules, cache: cache, fetch: fetch)
+        # the asciichem CLI specs). sources: an allow-list limiting the
+        # citable sources (the `asciichem-sources` document attribute)
+        # — cited sources outside it are skipped with one warning, so
+        # NC-free documents stay NC-free and the author sees why a
+        # bibitem is missing. Appends nothing when none of the
+        # molecules carries @cite or none resolves (warns instead —
+        # builds stay green and reproducible via the resolver cache).
+        def append_bibliography(document, molecules, cache: nil, fetch: nil, sources: nil)
+          warn_excluded_sources(molecules, sources)
+          entries = resolve(molecules, cache: cache, fetch: fetch, sources: sources)
           return if entries.empty?
 
           document << bibliography_section(document, entries)
         end
 
-        def resolve(molecules, cache:, fetch:)
+        def resolve(molecules, cache:, fetch:, sources: nil)
           entries = {}
           molecules.each do |molecule|
             # First-wins: a later identical (source, substance) keeps the
             # first-mention entry and order.
-            entries.merge!(entries_for(molecule, cache: cache, fetch: fetch)) do |_key, first, _last|
+            entries.merge!(entries_for(molecule, cache: cache, fetch: fetch,
+                                       sources: sources)) do |_key, first, _last|
               first
             end
           end
           entries.values
         end
 
-        def entries_for(molecule, cache:, fetch:)
-          AsciiChem::Citation.for_molecule(molecule, cache: cache, fetch: fetch)
+        # One warning per document when a cited source sits outside the
+        # allow-list — silence would hide a missing bibitem.
+        def warn_excluded_sources(molecules, sources)
+          return unless sources
+
+          cited = molecules.flat_map do |molecule|
+            molecule.properties
+                    .select { |p| p.title == 'cite' && p.value }
+                    .map(&:value)
+          end.uniq
+          excluded = cited - sources.map(&:to_s)
+          return if excluded.empty?
+
+          logger.warn(message_with_context(
+                        "asciichem-sources limits resolution to #{sources.join(', ')}; " \
+                        "cited source(s) #{excluded.join(', ')} will not resolve " \
+                        '(no bibitem emitted)',
+                        source_location: nil
+                      ))
+        end
+
+        def entries_for(molecule, cache:, fetch:, sources: nil)
+          AsciiChem::Citation.for_molecule(molecule, cache: cache, fetch: fetch,
+                                           sources: sources)
                              .map { |source, bibitem| entry(source, bibitem) }
                              .reduce({}, :merge)
         rescue AsciiChem::Error => e

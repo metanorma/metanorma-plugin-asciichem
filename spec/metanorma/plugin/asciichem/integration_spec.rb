@@ -66,4 +66,45 @@ RSpec.describe 'metanorma-asciichem document' do
   ensure
     FileUtils.remove_entry(cache.dir) if cache
   end
+
+  it 'limits sources with the asciichem-sources attribute' do
+    require 'tmpdir'
+    require 'asciichem/resolver'
+
+    pubchem_body = File.read(File.expand_path('../../../fixtures/pubchem-aspirin.json', __dir__))
+    cc_body = File.read(File.expand_path('../../../fixtures/common-chemistry-aspirin.json', __dir__))
+    fetcher = Struct.new(:pubchem, :common_chemistry, keyword_init: true) do
+      def get(url)
+        url.include?('commonchemistry') ? common_chemistry : pubchem
+      end
+    end.new(pubchem: pubchem_body, common_chemistry: cc_body)
+    cache = AsciiChem::Resolver::Cache.new(
+      dir: File.join(Dir.tmpdir, "mn-asciichem-sources-#{rand(1e9)}")
+    )
+    # Seed both sources so the limiting (not the fetch) is what's under test.
+    AsciiChem::Resolver[:pubchem].new.resolve(value: '50-78-2', convention: 'cas',
+                                              fetch: fetcher, cache: cache)
+    AsciiChem::Resolver[:common_chemistry].new.resolve(value: '50-78-2', convention: 'cas',
+                                                       fetch: fetcher, cache: cache)
+
+    adoc = <<~ADOC
+      = Aspirin monograph
+      Author
+      :asciichem-cache-dir: #{cache.dir}
+      :asciichem-sources: pubchem
+
+      [chem]
+      ----
+      CC(=O)OC1=CC=CC=C1C(=O)O @cas("50-78-2") @cite("common_chemistry")
+      ----
+    ADOC
+
+    doc = Asciidoctor.load(adoc, safe: :safe)
+    doc.convert
+
+    # common_chemistry is outside the allow-list: no bibliography section.
+    expect(doc.blocks.last).not_to be_a(Asciidoctor::Section)
+  ensure
+    FileUtils.remove_entry(cache.dir) if cache
+  end
 end

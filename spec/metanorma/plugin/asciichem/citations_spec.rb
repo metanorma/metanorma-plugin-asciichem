@@ -107,8 +107,9 @@ RSpec.describe Metanorma::Plugin::Asciichem::Citations do
     end
 
     it 'keeps two entries when two sources cite the same substance' do
-      # CAS Common Chemistry is opt-in (CC BY-NC); a real user
-      # registers it explicitly - the spec does the same.
+      # Common Chemistry is registered by default (maintainer decision
+      # 2026-11-11); the explicit register is idempotent and kept for
+      # clarity.
       AsciiChem::Resolver.register(:common_chemistry,
                                    AsciiChem::Resolver::CommonChemistry)
 
@@ -128,6 +129,33 @@ RSpec.describe Metanorma::Plugin::Asciichem::Citations do
       expect(anchors).to all(eq('BSYNRYMUTXBXSQ-UHFFFAOYSA-N'))
       expect(entries.count { |pass| pass.lines.join.include?('PubChem') }).to eq(1)
       expect(entries.count { |pass| pass.lines.join.include?('CAS Common Chemistry') }).to eq(1)
+    end
+
+    it 'limits the citable sources when the allow-list excludes one' do
+      doc = load_doc
+      described_class.append_bibliography(
+        doc,
+        molecules('CC(=O)OC1=CC=CC=C1C(=O)O @cas("50-78-2") @cite("pubchem")',
+                  'CC(=O)OC1=CC=CC=C1C(=O)O @cas("50-78-2") @cite("common_chemistry")'),
+        cache: cache, fetch: fetch, sources: %w[pubchem]
+      )
+
+      entries = doc.blocks.last.blocks
+      expect(entries.length).to eq(1)
+      expect(entries.first.lines.join).to include('PubChem CID 2244')
+    end
+
+    it 'warns when a cited source sits outside the allow-list' do
+      doc = load_doc
+      described_class.append_bibliography(
+        doc,
+        molecules('CC(=O)OC1=CC=CC=C1C(=O)O @cas("50-78-2") @cite("common_chemistry")'),
+        cache: cache, fetch: fetch, sources: %w[pubchem]
+      )
+
+      expect(doc.blocks).not_to be_empty
+      # no bibliography section appended: the only cited source was excluded
+      expect(doc.blocks.last).not_to be_a(Asciidoctor::Section)
     end
 
     it 'appends nothing when no molecule carries @cite' do

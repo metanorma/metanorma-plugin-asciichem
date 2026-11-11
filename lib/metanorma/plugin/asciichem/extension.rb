@@ -3,7 +3,7 @@
 module Metanorma
   module Plugin
     module Asciichem
-      # Asciidoctor extension surface (TODO.impl 49): one treeprocessor
+      # Metanorma extension surface (TODO.impl 49): one treeprocessor
       # for block-level chemistry + citation collection, one inline macro
       # for inline chemistry.
       #
@@ -40,7 +40,8 @@ module Metanorma
               molecules.concat(rewrite(node))
             end
             Citations.append_bibliography(document, molecules,
-                                          cache: cache_for(document))
+                                          cache: cache_for(document),
+                                          sources: sources_for(document))
             nil
           end
 
@@ -49,6 +50,19 @@ module Metanorma
           def cache_for(document)
             dir = document.attr('asciichem-cache-dir')
             dir && AsciiChem::Resolver::Cache.new(dir: dir)
+          end
+
+          # `asciichem-sources` (comma-separated) limits the sources the
+          # document's @cite annotations may resolve against — e.g.
+          # `:asciichem-sources: pubchem,opsin` keeps a document NC-free
+          # while Common Chemistry is registered by default. Absent, all
+          # registered sources are available. Unknown names warn and are
+          # skipped by the citation track.
+          def sources_for(document)
+            raw = document.attr('asciichem-sources')
+            return unless raw
+
+            raw.split(',').map(&:strip).reject(&:empty?)
           end
 
           # Parses the block source once; replaces the node with a stem
@@ -81,7 +95,7 @@ module Metanorma
               node.parent, :stem,
               content_model: :verbatim, source: Renderer.mathml(formula),
               # Standoc reads node.lines (raw); :default subs keep plain
-              # Asciidoctor/HTML5 previews working (escaped text).
+              # HTML5 previews working (escaped text).
               subs: :default
             )
             # Style "asciimath" matches core stem blocks; standoc still
