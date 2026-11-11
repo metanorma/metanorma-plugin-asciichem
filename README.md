@@ -144,7 +144,7 @@ record so the check is offline).
 
 ```sh
 bundle install
-bundle exec rspec        # 16 examples, network-free
+bundle exec rspec        # 22 examples, network-free
 bundle exec rubocop
 ```
 
