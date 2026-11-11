@@ -13,21 +13,14 @@ collected automatically into the document bibliography.
 gem install metanorma-plugin-asciichem
 ```
 
-The plugin follows the lutaml/glossarist contract: it exposes the
-extension classes and does not register them itself — the host
-does. [metanorma-standoc](https://github.com/metanorma/metanorma-standoc)
+The plugin follows the Metanorma plugin contract (lutaml/glossarist):
+it exposes the extension classes and does not register them itself —
+the host does.
+[metanorma-standoc](https://github.com/metanorma/metanorma-standoc)
 requires and registers this gem (see its converter), so with the
 gem installed, `[chem]` and `chem:[]` are active in every Metanorma
-compile. Outside Metanorma, register manually:
-
-```ruby
-require "metanorma-plugin-asciichem"
-
-Asciidoctor::Extensions.register do
-  treeprocessor Metanorma::Plugin::Asciichem::Extension::ChemTreeprocessor
-  inline_macro Metanorma::Plugin::Asciichem::Extension::ChemInlineMacro, :chem
-end
-```
+compile. A non-Metanorma host can register the same extension
+classes through its own extension registry.
 
 ## Usage
 
@@ -99,24 +92,32 @@ seeded cache to build without network:
 Seed it with `asciichem resolve --name aspirin`. Resolution failures
 warn and emit no bibitem; they never break the build.
 
-**Sources and licensing.** PubChem resolves by default. CAS Common
-Chemistry (CC BY-NC 4.0) is opt-in:
+**Sources and licensing.** PubChem, OPSIN, and CAS Common Chemistry
+are all registered by default (maintainer decision 2026-11-11: CC
+BY-NC 4.0 acceptable on by default — the required attribution rides
+every record and every emitted bibitem). Documents that must stay
+NC-free limit their `@cite` resolution with a document attribute:
 
-```ruby
-AsciiChem::Resolver.register(:common_chemistry,
-                             AsciiChem::Resolver::CommonChemistry)
+```adoc
+:asciichem-sources: pubchem,opsin
 ```
+
+A `@cite` naming a source outside the list is skipped with a warning
+(no bibitem), so the author sees why an entry is missing. The
+Ruby-level equivalent is `AsciiChem::Citation.for_molecule(...,
+sources:)`.
 
 A worked example document ships in `docs/example.adoc`.
 
 ## Compatibility
 
-Runtime dependencies are `asciichem` (`~> 0.29`, `>= 0.29.2`) and
-`moxml` — the extension operates at the Asciidoctor AST level and
-needs no Metanorma gem to run. Asciidoctor itself is provided by the
-host (metanorma-standoc requires and registers this gem; outside
-Metanorma, bring your own asciidoctor and register the extension as
-shown under Installation).
+Runtime dependencies are `asciichem` (`~> 0.31`, `>= 0.31.12` —
+0.31.12 adds the citation `sources:` allow-list behind the
+`asciichem-sources` attribute) and `moxml` — the extension operates
+at the host's AST level and needs no Metanorma gem to run. The host
+converter provides and registers the extension (metanorma-standoc
+requires and registers this gem; outside Metanorma, register the
+extension as shown under Installation).
 
 The full metanorma-standoc compile is exercised by the suite:
 `spec/metanorma/plugin/asciichem/standoc_spec.rb` compiles a document
@@ -148,7 +149,7 @@ bundle exec rubocop
 ```
 
 Spec fixtures are real PubChem / CAS Common Chemistry payloads; the
-fetchers are Structs shaped like the asciidoctor HTTP surface — no
+fetchers are Structs shaped like the resolver's HTTP surface — no
 network, no test doubles.
 
 ## License

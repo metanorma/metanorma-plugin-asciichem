@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.8] - 2026-11-11
+
+### Changed
+- asciichem floor consumed at 0.31.12 (the citation `sources:`
+  allow-list). All shipped sources — PubChem, OPSIN, CAS Common
+  Chemistry — now resolve by default (maintainer decision:
+  CC BY-NC 4.0 acceptable on by default; attribution rides every
+  record and bibitem).
+
+### Added
+- The `asciichem-sources` document attribute: a comma-separated
+  allow-list limiting what the document's `@cite` annotations may
+  resolve against (e.g. `:asciichem-sources: pubchem,opsin` keeps a
+  document NC-free). Cited sources outside the list are skipped with
+  a warning — no bibitem, build stays green.
+- Prose framed for the Metanorma plugin contract (the host is
+  Metanorma; extension registration is the host's).
+
 ## [0.1.7] - 2026-11-10
 
 ### Changed

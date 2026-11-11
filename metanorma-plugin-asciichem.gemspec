@@ -33,7 +33,9 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'asciichem', '~> 0.30', '>= 0.30.1'
+  # 0.31.12 is required for the citation `sources:` allow-list (the
+  # `asciichem-sources` document attribute).
+  spec.add_dependency 'asciichem', '~> 0.31', '>= 0.31.12'
   # moxml 0.6 removed the Opal surface (lutaml/moxml#516); owner
   # call to forward-pin the 0.6 series.
   spec.add_dependency 'moxml', '~> 0.6.1'
