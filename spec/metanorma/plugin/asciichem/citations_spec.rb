@@ -5,9 +5,10 @@ require 'asciichem/resolver'
 
 # Real fetcher shape from the asciichem CLI: a Struct whose #get
 # returns the cached payload (no network in specs). Routed per source
-# URL prefix like the adapters' request shapes.
+# URL prefix like the adapters' request shapes; the signature mirrors
+# AsciiChem::Resolver::Adapter#get (url, headers, limit).
 CitationFetcher = Struct.new(:pubchem, :common_chemistry, keyword_init: true) do
-  def get(url)
+  def get(url, _headers = {}, _limit = 3)
     url.include?('commonchemistry') ? common_chemistry : pubchem
   end
 end
