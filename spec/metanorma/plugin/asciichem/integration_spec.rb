@@ -74,7 +74,7 @@ RSpec.describe 'metanorma-asciichem document' do
     pubchem_body = File.read(File.expand_path('../../../fixtures/pubchem-aspirin.json', __dir__))
     cc_body = File.read(File.expand_path('../../../fixtures/common-chemistry-aspirin.json', __dir__))
     fetcher = Struct.new(:pubchem, :common_chemistry, keyword_init: true) do
-      def get(url)
+      def get(url, _headers = {}, _limit = 3)
         url.include?('commonchemistry') ? common_chemistry : pubchem
       end
     end.new(pubchem: pubchem_body, common_chemistry: cc_body)

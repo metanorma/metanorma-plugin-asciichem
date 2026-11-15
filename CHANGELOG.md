@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.9] - 2026-11-15
+
+### Changed
+- asciichem floor moved to the 1.x line (`~> 1.1`, `>= 1.1.0`): the
+  gem renumbered onto the {engine semver}.{runtime increment} scheme
+  (1.1.0.1 current), so the 0.31 pin could no longer resolve the
+  ecosystem's current line. The suite's fetcher stubs mirror the
+  current `AsciiChem::Resolver::Adapter#get` signature
+  (url, headers, limit).
+
 ## [0.1.8] - 2026-11-11
 
 ### Changed
